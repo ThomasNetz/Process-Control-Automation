@@ -1,0 +1,46 @@
+
+# Function to visualize distribution as a histogram and as a distribution function in comparison to a normal distribution
+
+### USL and LSL are drawn. If USL and LSL are not available, they need to be commented out from the code. 
+### relies on stats and other functions to calculate and draw a table with process parameters. 
+
+capability <- function(df, statsValueDF, statsFactorDF, valueString, colString, lineString, fillString){
+  # create stats DF
+  stats <- createStats(statsValueDF, statsFactorDF)  
+  # create facet grid
+  t1 <- ggplot(data=df, aes_string(x=valueString, fill=fillString)) + # strange that I can't parse a variable. 
+    geom_histogram(colour="Black", binwidth = 5) +
+    
+    ggtitle(paste0(valueString, " value distribution \ndepending on ",
+                   colString)) +
+    geom_vline(aes(xintercept= LSL), colour="Red", linetype = "dashed") + 
+    geom_vline(aes(xintercept= USL), colour="Red", linetype = "dashed") +
+    coord_cartesian(xlim=c(540,660))+
+    facet_grid(reformulate(colString,lineString), scales = "free")
+  g1 <-ggplotGrob(t1)  
+
+  t2 <- ggplot(data=df, aes_string(x=valueString, fill=fillString)) +
+    geom_density(alpha = 0.3) +
+    stat_function(fun=dnorm, colour="Black", 
+                  args = list(mean = mean(data$Rt05), sd = sd(data$Rt05))) +
+    geom_vline(aes(xintercept= LSL), colour="Red", linetype = "dashed") + 
+    geom_vline(aes(xintercept= USL), colour="Red", linetype = "dashed") +
+    coord_cartesian(xlim=c(540,660), ylim=c(0,0.03))+
+    facet_grid(reformulate(colString,lineString), scales = "free") 
+  g2 <- ggplotGrob(t2)
+  maxWidth = unit.pmax(g1$widths[2:3], g2$widths[2:3])
+  g1$widths[2:3] <- maxWidth
+  g2$widths[2:3] <- maxWidth
+  # create stats chart with 
+  table <-tableGrob(stats, theme=ttheme_default(base_size=6))
+  g <- list(g1,g2, table)
+  grid.arrange(grobs = g,  
+               layout_matrix = rbind(c(1,2), 
+                                c(1,2), c(1,2), c(3,3))) # Basic layouting  
+  
+}
+# 
+capability(data, data$Rt05, data$OD, "Rt05", "OD", "WT", "TCad")
+
+### calling function: 
+factors <- names(Filter(is.factor, data))
