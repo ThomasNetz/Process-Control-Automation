@@ -1,0 +1,38 @@
+
+library(data.table)
+
+# function visualizes categories
+# data to parse: dataframe, 
+# column name 1 as string for sorting, 
+# column 2 as string for shading
+
+longTail(data, "HTLot", "TCad")
+
+longTail <- function(df,factorString, fillString){
+  factor <- data[factorString]
+  # code adds to df a new column called count for a given factor column.
+  # this columns contains the number of counts per level.
+  df <- transform(df, count = ave(seq(nrow(df)), factor, FUN=length))
+  
+  df <- with(df, df[order(-df$count),]) #this data is then ordered
+  # although this reordering is not necessary, this could be an interesting 
+  # functionality for later.
+  
+  
+  # visualizing distribution of levels with the help of a bar chart: 
+  hplot <- ggplot(data=df, 
+             aes_string(x=paste0("reorder(", factorString, ",-count)"),
+                        fill=fillString)) # ordering necessary.
+  hplot <- hplot + geom_bar() +
+                   scale_x_discrete(name=factorString) +
+                   theme(axis.text.x  = element_text(angle=90)) +
+                   scale_y_continuous(paste0("occurences of ", factorString))
+  hplot
+}
+
+
+data <- transform(data, count = ave(seq(nrow(data)), Coulee, FUN=length))
+str(data)
+data <- with(data, data[order(-data$count),])
+data <- order(data, decreasing = TRUE)[3,]
+str(df)
