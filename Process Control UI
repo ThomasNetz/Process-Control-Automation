@@ -1,0 +1,106 @@
+
+library(shiny)
+library(shinythemes)
+library(ggplot2)
+library(plotly)
+
+
+## the input section should be changed to drop-down menues showing all category variables.
+## it might make sense to add a tab which allows to transform variables from numeric to factor type
+## layout sucks. Try to understand how distributing graphs works on this system.
+
+ui <- fluidPage(themeSelector(),
+  # replace themeSelector() by theme = shinytheme("darkkly")
+                
+  titlePanel(h1("Distribution according to a sorting factor")),
+  
+  sidebarLayout(
+    
+    sidebarPanel(
+      h3("Sidebar has no content yet."), width = 2
+    ),
+    
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Plotting acording to categories", 
+          selectInput("value", "Mechanical property of the product:", 
+            choices=names(Filter(is.numeric, data))),
+          selectInput("gridrow", "Choose what rows should show:",  
+            choices=names(Filter(is.factor, data))),
+          selectInput("gridcol", "Choose what columns should show:",  
+            choices=names(Filter(is.factor, data))),
+          selectInput("colors", "Choose meaning of colors:",
+            choices=names(Filter(is.factor, data))),
+          plotOutput("hist", height = 900)
+        ),
+        tabPanel("QQPlots", 
+          textInput("qqvalue", "Choose which continuous variable will be plotted:", value="Rt05"),
+          textInput("qqcol", "Choose what columns should show:", value="TTemp"),
+          textInput("qqrow", "Choose what rows should show:", value="OD"),
+          plotOutput("qqplot", height=900)
+        ),
+        tabPanel("Weblinks with direct tag a", a(href="www.r-tutorials.com", "r-tutorials")),
+        tabPanel("Citations with the blockquote tag", tags$blockquote("R is Great", cite = "R Programmer"))
+      )
+    )
+  )
+)
+server <- function(input, output, session) {
+  ## Input Tab 1
+  value <- reactive({
+    input$value
+  })  
+  colors <- reactive({
+    input$colors
+  })
+  gridrow <- reactive({
+    input$gridrow
+  })
+  gridcol <- reactive({
+    input$gridcol
+  })
+  
+  ## Input Tab 2
+  qqvalue <- reactive({
+    input$qqvalue
+  })
+  qqcol <- reactive({
+    input$qqcol
+  })
+  qqrow <- reactive({
+    input$qqrow
+  })
+    
+  ## add to this plot the distribution funtion. 
+  ## also, the statistics table should be calculated automatically. 
+  ## then, these statistics should be drawn on the correct facets.
+  
+  
+  ## Visualization Tab 1
+  output$hist <- renderPlot({
+    ggplot(data=data, aes_string(x=value(), fill=colors())) + 
+      geom_histogram(colour="Black", binwidth = 10) +
+      facet_grid(paste(gridrow(),"~",gridcol()), scales="free")
+  })
+  
+  ## Visualization Tab 2
+  output$qqplot <- renderPlot({
+    {
+      # following four lines from base R's qqline(), adapted for parametrization
+      y <- quantile(subset(data[[qqvalue()]], (!is.na(data[[qqvalue()]]))), c(0.25, 0.75))
+      x <- qnorm(c(0.25, 0.75))
+      slope <- diff(y)/diff(x)
+      int <- y[1L] - slope * x[1L]
+      
+      ggplot(data, aes_string(sample=qqvalue())) +
+        stat_qq(aes()) + 
+        geom_abline(slope = slope, intercept = int) +
+        facet_grid(reformulate(qqcol(), qqrow()), scales = "free") + 
+        ggtitle(paste0("QQ-Plot (Quantile-Quantile-Plot) of ", qqvalue()," vs Normal Distribution"))
+      
+    }
+  })
+}
+
+shinyApp(ui = ui, server = server)
+
