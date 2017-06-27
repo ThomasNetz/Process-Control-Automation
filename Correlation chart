@@ -1,0 +1,25 @@
+# create correlation data based on numeric columns present in a dataframe
+
+cordata <-cor(data[, sapply(data, is.numeric)], use = "complete")
+cordata ### showing cordata table
+
+###  optionally: 
+###  create correlation chart with some layouting with theme
+###  corrtable <-tableGrob(round(cordata, 2), 
+###                       theme=ttheme_default(base_size=8, 
+###                          padding = unit(c(1, 1), "mm"),
+###                          colhead = list(fg_params=list(rot=90))))
+
+
+# create a correlaction chart
+corrgraph <- ggplotGrob(ggcorrplot(cordata, 
+                         lab = TRUE, lab_size = 3,
+                        title = "Correlation in Dataset")) 
+                        
+
+###  creating Grob list and paring it to grid, then arranging it
+###  corr <- list(corrtable, corrgraph)
+###  grid.arrange(grobs = corr, ncol=2)
+
+# drawing correlation chart
+grid.arrange(corrgraph, ncol=1)
