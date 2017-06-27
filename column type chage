@@ -1,0 +1,21 @@
+
+
+# changing data types (not necessary):
+
+### The data format might be different from one Excel file to the other. 
+data$timeStamp <-as.POSIXct(data$timeStamp, format="%d/%m/%C%y %T")
+
+### Not all of the columns below might be present in data
+data$TTemp <- as.factor(data$TTemp)
+data$Rt05 <- as.factor(data$Rt05)
+data$OD <- as.factor(data$OD)
+data$WT <- as.factor(data$WT)
+data$NCad <- as.factor(data$NCad)
+data$TCad <- as.factor(data$TCad)
+data$heatNo <- as.factor(data$heatNo)
+data$NTemp <- as.factor(data$NTemp)
+data$IPPN <- as.double(data$IPPN)
+data$height <- as.factor(data$height)
+data$HTLot <- as.factor(data$HTLot)
+data$Q2015 <- as.factor(data$Q2015)
+data$midOnly <- as.factor(data$midOnly)
