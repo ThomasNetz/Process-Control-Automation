@@ -1,0 +1,24 @@
+
+
+# Creating a stats DF based on a product quality value (Rt05, A, ...) and based on a pre-chosen factor (OD, WT, ...)
+
+createStats <- function(col, factor){
+  factorlist <- list(factor)
+  
+  stats <- aggregate(col, by = factorlist, function(col) c(N = length(col), 
+                                                           mean = round(mean(col), digits=2), sd = round(sd(col), digits=2), 
+                                                           cpk = round(cpk(col), digits=2), cp = round(cp(col), digits=2), 
+                                                           cpu = round(cpu(col), digits=2), cpl = round(cpl(col), digits=2)))
+  
+  row.names(stats) <- levels(as.factor(factor))
+  stats$Group.1 = NULL
+  stats <- t(stats)
+  
+   ### This part might have to be modified depending on whether LSL and USL are defined. 
+   ### Reason: USL and LSL are necessary to calculate cp, cpu, and cpl. 
+   ### Thus, the missing elements might have to be ommitted in row.names
+  row.names(stats) <- c("N", "mean", "sd", "cpk", "cp", "cpu", "cpl")
+  
+  ### the result is returned as a dataframe.
+  return (stats)
+}
