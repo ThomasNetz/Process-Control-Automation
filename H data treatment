@@ -1,0 +1,13 @@
+
+
+
+# Code chunks for H data treatment (from SV)
+
+
+data$Hmax <- pmax(data$E1,data$E2,data$E3,data$M1,data$M2,data$M3,data$I1, data$I2, data$I3, na.rm=TRUE)
+data$Hmin <- pmin(data$E1,data$E2,data$E3,data$M1,data$M2,data$M3,data$I1, data$I2, data$I3, na.rm=TRUE)
+data$Hvar <- data$Hmax-data$Hmin
+data$OD <- c(114.30)
+?mean()
+
+
