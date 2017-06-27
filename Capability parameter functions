@@ -1,0 +1,30 @@
+# calculating process capability parameters
+
+cpk <- function(var){
+  mean <-mean(var)
+  sd <- sd(var)
+  cpk <- min(((USL-mean)/(3*sd)),((mean-LSL)/(3*sd)))
+  return(cpk) # return a single cpk value
+}
+
+cp <- function(var){
+  sd <- sd(var)
+  cp <- (USL-LSL)/(6*sd)
+  return(cp) # return a single cp value
+}
+
+cpu <- function(var){
+  mean <-mean(var)
+  sd <- sd(var)
+  cpu <- (USL-mean)/(3*sd)
+  return(cpu) # return a single cpu value
+}
+
+cpl <- function(var){
+  mean <-mean(var)
+  sd <- sd(var)
+  cpl <- (mean-LSL)/(3*sd)
+  return(cpl) # return a single cpl value
+}
+
+### Need to add calculation of PPM and yield. 
