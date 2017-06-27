@@ -1,0 +1,7 @@
+
+# Some data for the treatment of toughness data
+
+### For CVN work: "orientation", "testT", "size", "J1", "J2", "J3", "Javg", "Jsd"
+### data$Jmin <- pmin(data$J1, data$J2, data$J3)
+### ?min()
+
