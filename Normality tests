@@ -1,0 +1,19 @@
+
+
+ad.test(data$Rt05)  
+ks.test(data$Rt05, pnorm)
+
+?ks.test()
+?pnorm
+
+shapiro.test(data$A)
+
+data$dnorm <- rnorm(length(data$Rt05), mean(data$Rt05), sd(data$Rt05))
+data$dnorm
+
+Rt05.lm <- lm(Rt05 ~ data$dnorm, data=data)
+Rt05.stdres <- rstandard(Rt05.lm)
+Rt05.stdres
+Rt05.lm 
+g <- ggplot(x=data$Rt05, y=data$dnorm) + geom_point()
+g
