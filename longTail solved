@@ -1,3 +1,10 @@
+library(data.table)
+library(plyr)
+library(dplyr)
+library(ggplot2)
+
+
+
 longTail(data, "lot.TTH", "Rev.T", 8)
 
 longTail <- function(df,factorString, fillString, n){
