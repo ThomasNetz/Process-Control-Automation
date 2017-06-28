@@ -1,0 +1,37 @@
+longTail(data, "lot.TTH", "Rev.T", 8)
+
+longTail <- function(df,factorString, fillString, n){
+  factor <- df[factorString]
+  # code adds to df a new column called count for a given factor column.
+  # this column contains the number of counts per level.
+  df <- transform(df, count = ave(seq(nrow(df)), factor, FUN=length))
+  
+  # df <- with(df, df[-order(df$count),]) #this data is then ordered in decreasing manner
+  df <- df[order(df[,"count"], df[,factorString], decreasing = T), ]
+  
+  # A DF with the factor levels in one column and the respective occurences 
+  # is created and arranged in descending order
+  occurenceDF <- arrange(count(df, factorString), desc(freq))
+  
+  # the sum contains the number of rows after which the count level can be named differently
+  sum <- sum(occurenceDF[(1:n),"freq"])
+
+  
+  newLevels <- as.character(df[[factorString]])
+
+  newLevels[-(1:sum)] <- "Rest"
+  df$newLevels <- newLevels
+ 
+  # visualizing distribution of levels with the help of a bar chart: 
+  hplot <- ggplot(data=df, 
+             aes_string(x=paste0("reorder(","newLevels",",-count)"),
+                        fill=fillString)) # ordering necessary.
+  hplot <- hplot + geom_bar() +
+                   scale_x_discrete(name=factorString) +
+                   theme(axis.text.x  = element_text(angle=90)) +
+                   scale_y_continuous(paste0("occurences of ", factorString)) +
+                   facet_grid(reformulate(fillString,""))
+  hplot
+}
+
+
