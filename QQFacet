@@ -1,0 +1,17 @@
+# Adapted from https://stackoverflow.com/questions/4357031/qqnorm-and-qqline-in-ggplot2/
+qqplot.data <- function (vec, col, row) # argument: vector of numbers
+{
+  # following four lines from base R's qqline(), adapted for parametrization
+  y <- quantile(subset(data[[vec]], (!is.na(data[[vec]]))), c(0.25, 0.75))
+  x <- qnorm(c(0.25, 0.75))
+  slope <- diff(y)/diff(x)
+  int <- y[1L] - slope * x[1L]
+  
+  ggplot(data, aes_string(sample=vec)) +
+    stat_qq(aes()) + 
+    geom_abline(slope = slope, intercept = int) +
+    facet_grid(reformulate(col, row), scales = "free") + 
+    ggtitle(paste0("QQ-Plot (Quantile-Quantile-Plot) of ", vec," vs Normal Distribution"))
+  
+}
+qqplot.data("A","OD", ".")
